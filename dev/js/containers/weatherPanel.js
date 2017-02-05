@@ -7,6 +7,13 @@ import Request  from 'superagent';
 
 class WeatherPanel extends Component {
 
+  generateRandomCoordinates(){
+    $('#first-coordinate')[0].value = (Math.random()*90).toFixed(4);
+    $('#second-coordinate')[0].value = (Math.random()*180).toFixed(4);
+    $('#first-coordinate-sign')[0].value = Math.round(Math.random()*1000) % 2 ? "N" : "S";
+    $('#second-coordinate-sign')[0].value = Math.round(Math.random()*1000) % 2 ? "E" : "W";
+  }
+
 
   processData(data){
     var weatherData = {
@@ -116,34 +123,41 @@ class WeatherPanel extends Component {
   )
     } else if (this.props.weatherPanel.inputType === 'coordinates') {
       return(
-        <div className="row">
-          <div className="col-sm-2">
-            <button className="btn btn-success get-weather-btn"
-                    onClick={()=>this.getWeatherFromCoordinates($('#first-coordinate')[0].value, $('#first-coordinate-sign')[0].value, $('#second-coordinate')[0].value, $('#second-coordinate-sign')[0].value)}>go!</button>
-          </div>
-          <div className="col-sm-10">
+          <div>
             <div className="row">
-              <div className="col-xs-4">
-                <input id="first-coordinate" placeholder="00.0000" onFocus={()=>this.type='number'}/>
+              <div className="col-sm-2">
+                <button className="btn btn-success get-weather-btn"
+                        onClick={()=>this.getWeatherFromCoordinates($('#first-coordinate')[0].value, $('#first-coordinate-sign')[0].value, $('#second-coordinate')[0].value, $('#second-coordinate-sign')[0].value)}>go!</button>
               </div>
-              <div className="col-xs-2">
-                <select id="first-coordinate-sign">
-                  <option value="N">N</option>
-                  <option value="S">S</option>
-                </select>
+              <div className="col-sm-10">
+                <div className="row">
+                  <div className="col-xs-4">
+                    <input id="first-coordinate" placeholder="00.0000" onFocus={()=>this.type='number'}/>
+                  </div>
+                  <div className="col-xs-2">
+                    <select id="first-coordinate-sign">
+                      <option value="N">N</option>
+                      <option value="S">S</option>
+                    </select>
+                  </div>
+                  <div className="col-xs-4">
+                    <input id="second-coordinate" placeholder="000.0000" onFocus={()=>this.type='number'}/>
+                  </div>
+                  <div className="col-xs-2">
+                    <select id="second-coordinate-sign">
+                      <option value="E">E</option>
+                      <option value="W">W</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div className="col-xs-4">
-                <input id="second-coordinate" placeholder="000.0000" onFocus={()=>this.type='number'}/>
-              </div>
-              <div className="col-xs-2">
-                <select id="second-coordinate-sign">
-                  <option value="E">E</option>
-                  <option value="W">W</option>
-                </select>
+            </div>
+            <div className="row">
+              <div className="col-xs-12">
+                <button className="btn btn-success get-weather-btn mt10" onClick={()=>this.generateRandomCoordinates()}>random coordinates</button>
               </div>
             </div>
           </div>
-        </div>
       )
     }
   }
