@@ -2,7 +2,10 @@ import React, {Component, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {addNewWeather, removeWeather, changeInputType, setErrorMessage, removeErrorMessage} from '../actions';
-import Request  from 'superagent';
+import {errorMessage} from '../components/errorMessage';
+import {weatherInput} from '../components/weatherInput';
+import {weatherResults} from '../components/weatherResults';
+import Request from 'superagent';
 
 
 class WeatherPanel extends Component {
@@ -12,12 +15,13 @@ class WeatherPanel extends Component {
     $('#second-coordinate')[0].value = (Math.random()*180).toFixed(4);
     $('#first-coordinate-sign')[0].value = Math.round(Math.random()*1000) % 2 ? "N" : "S";
     $('#second-coordinate-sign')[0].value = Math.round(Math.random()*1000) % 2 ? "E" : "W";
+    this.resetError();
   }
 
-
   processData(data){
+    this.resetError();
     var weatherData = {
-      coord: (data.coord.lat > 0 ? data.coord.lat + ' N, ' : -data.coord.lat + ' S, ') + (data.coord.lon > 0 ? data.coord.lon + ' E' : -data.coord.lon + ' W'),
+      coord: (data.coord.lat > 0 ? data.coord.lat + '° N, ' : -data.coord.lat + '° S, ') + (data.coord.lon > 0 ? data.coord.lon + '° E' : -data.coord.lon + '° W'),
       city: data.name,
       main: data.weather[0].main,
       description: data.weather[0].description,
@@ -29,155 +33,57 @@ class WeatherPanel extends Component {
     this.props.addNewWeather(weatherData);
   }
 
-
-  getWeatherFromCityName(inputField) {
-    if (inputField){
-      var splits = inputField.split(',');
-      if (splits.length === 1) {
-        Request.get('http://api.openweathermap.org/data/2.5/weather?q=' + splits[0] + '&APPID=e1ee566c1c83e3b04456992ef1caee5a')
-            .then(result=>{
-              if (this.props.weatherPanel.errorMessage){
-                this.props.removeErrorMessage();
-              }
-              this.processData(JSON.parse(result.text));
-            })
-            .catch(error=> {
-             if (error.status === "502") {
-               this.props.setErrorMessage('Your city name is wrong');
-             }
-            })
-      } else {
-        console.log(splits[splits.length-2], splits[splits.length-1]);
-        Request.get('http://api.openweathermap.org/data/2.5/weather?q=' + splits[splits.length-2] + ',' + splits[splits.length-1] + '&APPID=e1ee566c1c83e3b04456992ef1caee5a')
-            .then(result=>{
-              if (this.props.weatherPanel.errorMessage){
-                this.props.removeErrorMessage();
-              }
-              this.processData(JSON.parse(result.text));
-            })
-            .catch(error=> {
-              if (error.status === "502"){
-                this.props.setErrorMessage('Your city name is wrong');
-              }
-            })
-      }
+  processError(error, message){
+    if (error.status === 502) {
+      this.props.setErrorMessage(message);
     }
   }
 
-  getWeatherFromCoordinates(firstCoordinate, firstCoordinateSign, secondCoordinate, secondCoordinateSign) {
+  resetError(){
+    if (this.props.weatherPanel.errorMessage){
+      this.props.removeErrorMessage();
+    }
+  }
+
+  getWeatherFromCityName(inputField){
+    if (inputField){
+      let splits = inputField.split(',');
+      let requestQuery = splits.length === 1 ? splits[0] : splits[splits.length-2] + ',' + splits[splits.length-1];
+      Request.get('http://api.openweathermap.org/data/2.5/weather?q=' + requestQuery + '&APPID=e1ee566c1c83e3b04456992ef1caee5a')
+        .then(result=>{
+          this.processData(JSON.parse(result.text));
+        })
+        .catch(error=>{
+          this.processError(error, 'not found any matching city, please insert city name correctly');
+        });
+    }
+  }
+
+  getWeatherFromCoordinates(firstCoordinate, firstCoordinateSign, secondCoordinate, secondCoordinateSign){
     if (!firstCoordinate || !secondCoordinate || isNaN(Number(firstCoordinate)) || isNaN(Number(secondCoordinate))
         || Number(firstCoordinate) < 0 || Number(firstCoordinate) > 90 || Number(secondCoordinate) < 0 || Number(secondCoordinate) > 180
         || (firstCoordinateSign.toUpperCase() !== "N" && firstCoordinateSign.toUpperCase() !== "S")
         || (secondCoordinateSign.toUpperCase() !== "E" && secondCoordinateSign.toUpperCase() !== "W")){
-      console.log('wrong');
-      this.props.setErrorMessage('Your coordinates are wrong');
+      this.props.setErrorMessage('no such coordinates, please insert coordinates correctly');
     } else {
-      if (this.props.weatherPanel.errorMessage){
-        this.props.removeErrorMessage();
-      }
-      if (firstCoordinateSign.toUpperCase() === "S"){
-        firstCoordinate = -firstCoordinate;
-      }
-      if (secondCoordinateSign.toUpperCase() === "W"){
-        secondCoordinate = -secondCoordinate;
-      }
-      Request.get('http://api.openweathermap.org/data/2.5/weather?lat=' + firstCoordinate + '&lon=' + secondCoordinate + '&APPID=e1ee566c1c83e3b04456992ef1caee5a')
-          .then(result=>{
-            this.processData(JSON.parse(result.text));
-          })
-          .catch(error=> {
-            if (error.status === "502"){
-              this.props.setErrorMessage('Your coordinates are wrong');
-            }
-          });
-    }
-    console.log('aaa', arguments);
-  }
-
-  renderWeather() {
-    if (this.props.weather.length) {
-      return this.props.weather.map((weather)=>{
-        return(
-          <div className="weather-tile" key={weather.id}>
-            <div className="row">
-              <div className="col-sm-4 city-name">{weather.city}</div>
-              <div className="col-sm-8">weather details</div>
-              <button className="btn btn-success" onClick={()=>this.props.removeWeather(weather)}>remove</button>
-            </div>
-          </div>
-        )
-      })
+      var first = firstCoordinateSign.toUpperCase() === "S" ? -firstCoordinate : firstCoordinate;
+      var second = secondCoordinateSign.toUpperCase() === "W" ? -secondCoordinate : secondCoordinate;
+      Request.get('http://api.openweathermap.org/data/2.5/weather?lat=' + first + '&lon=' + second + '&APPID=e1ee566c1c83e3b04456992ef1caee5a')
+        .then(result=>{
+          this.processData(JSON.parse(result.text));
+        })
+        .catch(error=>{
+          this.processError(error, 'no such coordinates, please insert coordinates correctly');
+        });
     }
   }
-  renderWeatherInput(){
-    if (this.props.weatherPanel.inputType === 'city') {
-      return(
-        <div className="row">
-          <div className="col-sm-2">
-            <button className="btn btn-success get-weather-btn" onClick={()=>this.getWeatherFromCityName($('#weather-input-city')[0].value)}>go!</button>
-          </div>
-          <div className="col-sm-10">
-            <input id="weather-input-city" type="text" placeholder="enter city name" onChange={()=>$('#weather-input-city').geocomplete()}/>
-          </div>
-        </div>
-  )
-    } else if (this.props.weatherPanel.inputType === 'coordinates') {
-      return(
-          <div>
-            <div className="row">
-              <div className="col-sm-2">
-                <button className="btn btn-success get-weather-btn"
-                        onClick={()=>this.getWeatherFromCoordinates($('#first-coordinate')[0].value, $('#first-coordinate-sign')[0].value, $('#second-coordinate')[0].value, $('#second-coordinate-sign')[0].value)}>go!</button>
-              </div>
-              <div className="col-sm-10">
-                <div className="row">
-                  <div className="col-xs-4">
-                    <input id="first-coordinate" placeholder="00.0000" onFocus={()=>this.type='number'}/>
-                  </div>
-                  <div className="col-xs-2">
-                    <select id="first-coordinate-sign">
-                      <option value="N">N</option>
-                      <option value="S">S</option>
-                    </select>
-                  </div>
-                  <div className="col-xs-4">
-                    <input id="second-coordinate" placeholder="000.0000" onFocus={()=>this.type='number'}/>
-                  </div>
-                  <div className="col-xs-2">
-                    <select id="second-coordinate-sign">
-                      <option value="E">E</option>
-                      <option value="W">W</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-xs-12">
-                <button className="btn btn-success get-weather-btn mt10" onClick={()=>this.generateRandomCoordinates()}>random coordinates</button>
-              </div>
-            </div>
-          </div>
-      )
-    }
-  }
-
-  renderErrorMessage(){
-    console.log('rr');
-    if (this.props.weatherPanel.errorMessage){
-      return(
-            <div className="error-message">{this.props.weatherPanel.errorMessage}</div>
-      )
-    }
-  }
-
 
   render() {
     return (
       <div className="container">
-        {this.renderErrorMessage()}
+        {errorMessage(this.props)}
         <div className="weather-panel">
-          <div className="input-panel">
+          <div className="input-panel mb20">
             <div className="row">
               <div className="col-sm-6">
                 <h1>Find your weather!</h1>
@@ -193,9 +99,9 @@ class WeatherPanel extends Component {
                 </div>
               </div>
             </div>
-            {this.renderWeatherInput()}
+            {weatherInput(this.props, this)}
           </div>
-          {this.renderWeather()}
+          {weatherResults(this.props)}
         </div>
       </div>
     )

@@ -4,10 +4,8 @@ body {
 .mt10{
 	margin-top: 10px;
 }
-.error-message{
-	padding:1em;
-	border-radius: 20px;
-	background-color: antiquewhite;
+.mb20{
+	margin-bottom: 20px;
 }
 
 .weather-panel{
@@ -49,11 +47,4 @@ body {
 }
 .city-name{
 	font-size: 3em;
-}
-
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-	-webkit-appearance: none;
-	margin: 0;
 }

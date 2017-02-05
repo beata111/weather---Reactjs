@@ -1,5 +1,4 @@
 export const addNewWeather = (data) => {
-    console.log(data);
     return {
       type: 'ADD_NEW_WEATHER',
       payload: data
@@ -14,9 +13,7 @@ export const removeWeather = (data) => {
 export const setErrorMessage = (message) => {
     return {
       type: 'SET_ERROR_MESSAGE',
-      payload: {
-        message: message
-      }
+      payload: message
     }
 };
 export const removeErrorMessage = () => {
