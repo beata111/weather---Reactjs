@@ -28,7 +28,8 @@ class WeatherPanel extends Component {
       country: data.sys.country,
       temp: data.main.temp,
       pressure: data.main.pressure,
-      wind: data.wind.speed
+      wind: data.wind.speed,
+      humidity: data.main.humidity
     };
     this.props.addNewWeather(weatherData);
   }
@@ -36,6 +37,8 @@ class WeatherPanel extends Component {
   processError(error, message){
     if (error.status === 502) {
       this.props.setErrorMessage(message);
+    } else {
+      this.props.setErrorMessage('uuups, unexpected error: ' + (error.response ? error.response.text : ''));
     }
   }
 
@@ -49,7 +52,7 @@ class WeatherPanel extends Component {
     if (inputField){
       let splits = inputField.split(',');
       let requestQuery = splits.length === 1 ? splits[0] : splits[splits.length-2] + ',' + splits[splits.length-1];
-      Request.get('http://api.openweathermap.org/data/2.5/weather?q=' + requestQuery + '&APPID=e1ee566c1c83e3b04456992ef1caee5a')
+      Request.get('http://api.openweathermap.org/data/2.5/weather?q=' + requestQuery + '&units=metric&APPID=e1ee566c1c83e3b04456992ef1caee5a')
         .then(result=>{
           this.processData(JSON.parse(result.text));
         })
@@ -68,7 +71,7 @@ class WeatherPanel extends Component {
     } else {
       var first = firstCoordinateSign.toUpperCase() === "S" ? -firstCoordinate : firstCoordinate;
       var second = secondCoordinateSign.toUpperCase() === "W" ? -secondCoordinate : secondCoordinate;
-      Request.get('http://api.openweathermap.org/data/2.5/weather?lat=' + first + '&lon=' + second + '&APPID=e1ee566c1c83e3b04456992ef1caee5a')
+      Request.get('http://api.openweathermap.org/data/2.5/weather?lat=' + first + '&lon=' + second + '&units=metric&APPID=e1ee566c1c83e3b04456992ef1caee5a')
         .then(result=>{
           this.processData(JSON.parse(result.text));
         })
@@ -86,22 +89,22 @@ class WeatherPanel extends Component {
           <div className="input-panel mb20">
             <div className="row">
               <div className="col-sm-6">
-                <h1>Find your weather!</h1>
+                <h1 className="mt0 mb20">Find your weather!</h1>
               </div>
               <div className="col-sm-6">
-                <div className="row">
-                  <div className="col-xs-6">
-                    <button className="btn btn-success get-weather-btn" onClick={()=>this.props.changeInputType('city')}>by city</button>
+                <div className="row mb20">
+                  <div className="col-xs-6 col-sm-5 col-md-6">
+                    <button className="btn btn-success weather-btn" onClick={()=>this.props.changeInputType('city')}>by city</button>
                   </div>
-                  <div className="col-xs-6">
-                    <button className="btn btn-success get-weather-btn" onClick={()=>this.props.changeInputType('coordinates')}>by coordinates</button>
+                  <div className="col-xs-6 col-sm-7 col-md-6">
+                    <button className="btn btn-success weather-btn" onClick={()=>this.props.changeInputType('coordinates')}>by coordinates</button>
                   </div>
                 </div>
               </div>
             </div>
             {weatherInput(this.props, this)}
           </div>
-          {weatherResults(this.props)}
+          {weatherResults(this.props, this)}
         </div>
       </div>
     )

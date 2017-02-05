@@ -1,50 +1,105 @@
-body {
-  font-family: pacifico, sans-serif;
-}
-.mt10{
-	margin-top: 10px;
-}
-.mb20{
-	margin-bottom: 20px;
+@media (max-width: 786px) {
+  .weather-input{
+	margin-top: 20px;
+  }
+  .coordinate-select{
+	padding-left: 5px;
+  }
+  .div-glyphicon-remove{
+	top: 20px;
+	left: 20px;
+  }
 }
 
+body {
+  font-family: pacifico, sans-serif;
+  white-space: nowrap;
+}
+.mt0{
+  margin-top: 0;
+}
+.mt20{
+  margin-top: 20px;
+}
+.mb20{
+  margin-bottom: 20px;
+}
+.no-padding{
+	padding: 0;
+}
 .weather-panel{
-	padding:2em;
-	border-radius: 20px;
-	background-color: aquamarine;
+  padding:2em;
+  border-radius: 20px;
+  background-image: url("https://img.clipartfox.com/b086c42b9cf71bf9b64173816d955eba_png-small-medium-large-sky-clipart-png_600-400.png");
+  background-color: #0843ca;
+  background-size: cover;
+  h1{
+	color: #daf291;
+  }
 }
 
 .input-panel{
-
-	input, select{
-		padding-left: 20px;
-		outline: none !important;
-		width: 100%;
-		height: 2em;
-		border: none;
-		font-size: 2em;
-		border-radius: 10px;
-	}
-
-	.weather-input-city{
-
-	}
-
-	.get-weather-btn{
-		font-size: 2em;
-		width: 100%;
-	}
-
+  input, select{
+	background-color: rgba(255, 255, 255, 0.9);
+	padding-left: 20px;
+	outline: none !important;
+	width: 100%;
+	height: 2em;
+	border: none;
+	font-size: 2em;
+	border-radius: 10px;
+  }
+  .weather-btn{
+	font-size: 2em;
+	width: 100%;
+	background-color: rgba(92, 184, 92, 0.80);
+  	outline: none !important;
+  }
 }
-
 
 .weather-tile{
-	padding: 2em;
-	text-align: right;
-	margin-bottom: 50px;
-	background-color: aqua;
-	border-radius: 20px;
-}
-.city-name{
+  overflow: hidden;
+  color: #6962ac;
+  padding: 2em;
+  margin-bottom: 50px;
+  background-color: rgba(255, 255, 255, 0.55);
+  border-radius: 20px;
+  position: relative;
+
+  .results-city-name{
 	font-size: 3em;
+  }
+  .results-coordinates{
+	font-family: Arial;
+  }
+  .results-description-main{
+	font-size: 1.6em;
+  }
+  .results-description{
+	font-size: 1.8em;
+  }
+  .results-details{
+	font-size: 1.3em;
+  }
+  .results-details-content{
+	font-size: 2.2em;
+  }
+  .div-glyphicon{
+	font-size: 2em;
+	position: absolute;
+    &:hover{
+	  color: #4C457F;
+	}
+	&:active{
+      color: #7f7f2f;
+    }
+  }
+  .div-glyphicon-repeat{
+	top: 20px;
+	right: 20px;
+  }
+  .div-glyphicon-remove{
+	bottom: 20px;
+	right: 20px;
+  }
 }
