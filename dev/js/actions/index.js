@@ -1,27 +1,28 @@
 export const addNewWeather = (data) => {
-
-    console.log('ddddddd',data);
+    console.log(data);
     return {
       type: 'ADD_NEW_WEATHER',
-      payload: {
-        city: 'new'
-      }
+      payload: data
     }
 };
-export const removeWeather = (id) => {
+export const removeWeather = (data) => {
     return {
       type: 'REMOVE_WEATHER',
+      payload: data
+    }
+};
+export const setErrorMessage = (message) => {
+    return {
+      type: 'SET_ERROR_MESSAGE',
       payload: {
-        id: id
+        message: message
       }
     }
 };
-export const moveWeatherUp = (id) => {
+export const removeErrorMessage = () => {
     return {
-      type: 'MOVE_WEATHER_UP',
-      payload: {
-        id: id
-      }
+        type: 'REMOVE_ERROR_MESSAGE',
+        payload: null
     }
 };
 export const changeInputType = (type) => {

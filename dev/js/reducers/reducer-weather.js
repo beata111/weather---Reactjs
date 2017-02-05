@@ -1,40 +1,24 @@
-var defaultState = [
-  {
-    id: 1,
-    city: 'city_1'
-  }
-];
-
-
-export default function (state = defaultState, action) {
+export default function (state = [], action) {
   switch (action.type) {
     case 'ADD_NEW_WEATHER':
-      let newWeather = {
-        id: state[state.length-1].id + 1,
-        city: action.payload.city
-      };
-      return [...state, newWeather];
+      let stateReduced = removeItem(state, action);
+      let newWeather = Object.assign({}, action.payload, {id: stateReduced.length ? stateReduced[0].id + 1 : 1});
+      return [newWeather, ...stateReduced];
+
     case 'REMOVE_WEATHER':
-      let newState = [];
-      state.forEach((weather)=>{
-        if (weather.id !== action.payload.id){
-          newState.push(weather);
-        }
-      });
-      return newState;
-    case 'MOVE_WEATHER_UP': {
-      let weatherPrioritized = [];
-      let weatherNotPrioritized = [];
-      state.forEach((weather)=>{
-        if (weather.id !== action.payload.id){
-          weatherNotPrioritized.push(weather);
-        } else {
-          weatherPrioritized.push(weather);
-        }
-      });
-      return [...weatherPrioritized, ...weatherNotPrioritized];
-    }
+      return removeItem(state, action);
+
     default:
       return state;
   }
 }
+
+const removeItem = (state, action) => {
+  let newState = [];
+  state.forEach((stateItem)=>{
+    if (stateItem.coord !== action.payload.coord){
+      newState.push(stateItem);
+    }
+  });
+  return newState;
+};
