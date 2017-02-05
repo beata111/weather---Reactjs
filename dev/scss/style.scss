@@ -2,6 +2,36 @@ body {
   font-family: pacifico, sans-serif;
 }
 
+.weather-panel{
+	padding:2em;
+	border-radius: 20px;
+	background-color: aquamarine;
+}
+
+.input-panel{
+
+	input, select{
+		padding-left: 20px;
+		outline: none !important;
+		width: 100%;
+		height: 2em;
+		border: none;
+		font-size: 2em;
+		border-radius: 10px;
+	}
+
+	.weather-input-city{
+
+	}
+
+	.get-weather-btn{
+		font-size: 2em;
+		width: 100%;
+	}
+
+}
+
+
 .weather-tile{
 	padding: 2em;
 	text-align: right;
@@ -11,4 +41,11 @@ body {
 }
 .city-name{
 	font-size: 3em;
+}
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
 }
