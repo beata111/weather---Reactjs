@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "test": "jest",
+    "test:watch": "npm test -- --watch"
   },
   "license": "ISC",
   "dependencies": {
@@ -39,9 +41,12 @@
     "webpack-hot-middleware": "^2.11.0"
   },
   "devDependencies": {
+    "babel-jest": "^18.0.0",
     "babel-plugin-react-transform": "^2.0.2",
     "babel-preset-stage-0": "^6.5.0",
     "bootstrap": "^3.3.7",
+    "enzyme": "^2.7.1",
+    "jest": "^18.1.0",
     "react-transform-hmr": "^1.0.4"
   }
 }

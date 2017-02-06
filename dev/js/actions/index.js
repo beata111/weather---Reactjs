@@ -23,8 +23,6 @@ export const removeErrorMessage = () => {
     }
 };
 export const changeInputType = (type) => {
-
-    console.log(type);
     if (type === 'city') {
         return {
             type: 'SET_INPUT_TYPE_TO_CITY',
